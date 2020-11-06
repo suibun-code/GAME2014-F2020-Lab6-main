@@ -10,8 +10,11 @@ public class PlayerBehaviour : MonoBehaviour
 
     public Joystick joystick;
     public float joystickHorizontalSens;
+    public float joystickVerticalSens;
     public float horizontalForce;
     public float verticalForce;
+
+    public bool isGrounded = false;
 
     // Start is called before the first frame update
     void Start()
@@ -29,21 +32,45 @@ public class PlayerBehaviour : MonoBehaviour
 
     void Move()
     {
-        if (joystick.Horizontal > joystickHorizontalSens)
+        if (isGrounded)
         {
-            //move right
-            rigidBody.AddForce(Vector2.right * horizontalForce * Time.deltaTime);
-            spriteRenderer.flipX = false;
+            if (joystick.Horizontal > joystickHorizontalSens)
+            {
+                //move right
+                rigidBody.AddForce(Vector2.right * horizontalForce * Time.deltaTime);
+                spriteRenderer.flipX = false;
+                animator.SetInteger("AnimState", 1);
+            }
+            else if (joystick.Horizontal < -joystickHorizontalSens)
+            {
+                //move left
+                rigidBody.AddForce(Vector2.left * horizontalForce * Time.deltaTime);
+                spriteRenderer.flipX = true;
+                animator.SetInteger("AnimState", 1);
+
+            }
+            else if (joystick.Vertical > joystickVerticalSens)
+            {
+                //jump
+                rigidBody.AddForce(Vector2.up * verticalForce * Time.deltaTime);
+                animator.SetInteger("AnimState", 2);
+
+            }
+            else
+            {
+                //idle
+                animator.SetInteger("AnimState", 0);
+            }
         }
-        else if (joystick.Horizontal < -joystickHorizontalSens)
-        {
-            //move left
-            rigidBody.AddForce(Vector2.left * horizontalForce * Time.deltaTime);
-            spriteRenderer.flipX = true;
-        }
-        else
-        {
-            //idle
-        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        isGrounded = true;
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        isGrounded = false;
     }
 }

@@ -13,6 +13,7 @@ public class PlayerBehaviour : MonoBehaviour
     public float joystickVerticalSens;
     public float horizontalForce;
     public float verticalForce;
+    public Transform spawnPoint;
 
     public bool isGrounded = false;
 
@@ -41,7 +42,7 @@ public class PlayerBehaviour : MonoBehaviour
                 spriteRenderer.flipX = false;
                 animator.SetInteger("AnimState", 1);
             }
-            else if (joystick.Horizontal < -joystickHorizontalSens)
+            if (joystick.Horizontal < -joystickHorizontalSens)
             {
                 //move left
                 rigidBody.AddForce(Vector2.left * horizontalForce * Time.deltaTime);
@@ -49,14 +50,14 @@ public class PlayerBehaviour : MonoBehaviour
                 animator.SetInteger("AnimState", 1);
 
             }
-            else if (joystick.Vertical > joystickVerticalSens)
+            if (joystick.Vertical > joystickVerticalSens)
             {
                 //jump
                 rigidBody.AddForce(Vector2.up * verticalForce * Time.deltaTime);
                 animator.SetInteger("AnimState", 2);
 
             }
-            else
+            if (joystick.Horizontal < joystickHorizontalSens && joystick.Horizontal > -joystickHorizontalSens)
             {
                 //idle
                 animator.SetInteger("AnimState", 0);
@@ -72,5 +73,12 @@ public class PlayerBehaviour : MonoBehaviour
     private void OnCollisionExit2D(Collision2D other)
     {
         isGrounded = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        //respawn
+        if (other.gameObject.CompareTag("DeathPlane"))
+            transform.position = spawnPoint.position;
     }
 }

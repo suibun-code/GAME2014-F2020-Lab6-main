@@ -42,7 +42,7 @@ public class PlayerBehaviour : MonoBehaviour
                 spriteRenderer.flipX = false;
                 animator.SetInteger("AnimState", 1);
             }
-            if (joystick.Horizontal < -joystickHorizontalSens)
+            else if (joystick.Horizontal < -joystickHorizontalSens)
             {
                 //move left
                 rigidBody.AddForce(Vector2.left * horizontalForce * Time.deltaTime);
